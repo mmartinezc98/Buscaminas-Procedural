@@ -11,6 +11,8 @@ public class Piece : MonoBehaviour
     public int y;
     public bool bomb = false;
 
+    public bool Flagged= false; //variable para ver si tiene bandera o no
+
     private void OnMouseDown()
     {
         if (bomb)
@@ -18,6 +20,7 @@ public class Piece : MonoBehaviour
             // si es una bomba lo pintamos de rojo
             GetComponent<SpriteRenderer>().color = Color.red;
             transform.GetChild(0).gameObject.SetActive(false); // Oculta el Canvas
+            MapGenerator.gen.AddFlag();
         }
         else
         {
@@ -26,6 +29,41 @@ public class Piece : MonoBehaviour
         }
 
         RevealPieces();
+    }
+
+
+    //MÉTODO PARA QUE SI SE PULSA EL BOTON DERECHO SE PONGA UNA BANDERA
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1)) // clic derecho
+        {
+            ToggleFlag();
+        }
+
+
+    }
+
+    private void ToggleFlag()
+    {
+        if (revealed) {
+            return; //si la casilla esta revelada no hace nada 
+        }
+
+        Flagged = !Flagged;
+
+        if (Flagged) //cuando se le ha puesto una bandera, cambia el color a azul y llama al metodo AddFlag
+        {
+            GetComponent<SpriteRenderer>().color = Color.blue;
+            MapGenerator.gen.AddFlag();
+        }
+        else //cambia el color a blanco y llama al método correspondiente
+        {
+            GetComponent<SpriteRenderer>().color = Color.white;
+            MapGenerator.gen.RemoveFlag();
+
+        }
+
+
     }
 
     private void RevealPieces()

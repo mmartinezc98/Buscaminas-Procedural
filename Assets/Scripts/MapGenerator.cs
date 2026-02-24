@@ -1,18 +1,28 @@
+using TMPro;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
     public static MapGenerator gen;   // Singleton
 
+    [Header ("Variables Generación")]
     [SerializeField] public GameObject piece;
     [SerializeField] public int Width;
     [SerializeField] public int Height;
+
+    [Header("Variables Bombas")]
     [SerializeField] public int BombsNumber;
+    public int BombsLeft;
+    [SerializeField] public TextMeshProUGUI BombsCounterText;
 
     public GameObject[][] Map;
 
     private void Start()
     {
+        //inicializamos el contador de minas y el texto del contador
+        BombsLeft = BombsNumber;
+        BombsCounterText.text = BombsLeft.ToString();
+
         // Activamos el Singleton
         gen = this;
 
@@ -23,8 +33,7 @@ public class MapGenerator : MonoBehaviour
         }
 
         // Centramos la cámara
-        Camera.main.transform.position =
-            new Vector3(((float)Width / 2) - 0.5f, ((float)Height / 2) - 0.5f, -10f);
+        Camera.main.transform.position = new Vector3(((float)Width / 2) - 0.5f, ((float)Height / 2) - 0.5f, -10f);
 
         // Instanciamos las piezas y las guardamos en el array
         for (int i = 0; i < Width; i++)
@@ -34,14 +43,7 @@ public class MapGenerator : MonoBehaviour
                 Map[i][j]= Instantiate(piece, new Vector2(i,j),Quaternion.identity);
                 Map[i][j].GetComponent<Piece>().x=i;
                 Map[i][j].GetComponent<Piece>().y=j;
-               /* GameObject obj = Instantiate(piece, new Vector2(i, j), Quaternion.identity);
-
-                Map[i][j] = obj;
-
-                // Asignamos coordenadas a la pieza
-                Piece p = obj.GetComponent<Piece>();
-                p.x = i;
-                p.y = j;*/
+               
             }
         }
 
@@ -99,4 +101,18 @@ public class MapGenerator : MonoBehaviour
 
         return count;
     }
+
+    //Métodos para colocar y quitar las banderas
+    public void AddFlag()
+    {
+        BombsLeft--;
+        BombsCounterText.text = BombsLeft.ToString();
+    }
+
+    public void RemoveFlag()
+    {
+        BombsLeft++;
+        BombsCounterText.text = BombsLeft.ToString();
+    }
+
 }
